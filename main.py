@@ -111,6 +111,8 @@ def send_line_audio(url: str, duration_ms: int) -> None:
         },
         timeout=30,
     )
+    if not resp.ok:
+        print(f"LINE APIエラー ({resp.status_code}): {resp.text}")
     resp.raise_for_status()
 
 
