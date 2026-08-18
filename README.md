@@ -15,7 +15,7 @@
 
 ### 1. リポジトリを Public にする
 
-LINE の音声メッセージは `originContentUrl` に指定した URL を LINE のサーバーが
+LINE の音声メッセージは `originalContentUrl` に指定した URL を LINE のサーバーが
 直接フェッチする仕組みのため、mp3 を置くリポジトリは **Public** である必要が
 あります (Private だと LINE 側から取得できません)。
 

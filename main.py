@@ -104,7 +104,7 @@ def send_line_audio(url: str, duration_ms: int) -> None:
             "messages": [
                 {
                     "type": "audio",
-                    "originContentUrl": url,
+                    "originalContentUrl": url,
                     "duration": duration_ms,
                 }
             ],
