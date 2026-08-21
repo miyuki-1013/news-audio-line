@@ -39,6 +39,22 @@ jobs:
           git push
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
+      - name: Wait for jsDelivr to serve the new file
+        run: |
+          URL="https://cdn.jsdelivr.net/gh/${{ github.repository }}@${{ steps.commit.outputs.sha }}/audio/latest.mp3"
+          EXPECTED_SIZE=$(stat -c%s audio/latest.mp3)
+          for i in $(seq 1 20); do
+            ACTUAL_SIZE=$(curl -sI "$URL" | tr -d '\r' | awk -F': ' 'tolower($1)=="content-length"{print $2}')
+            if [ "$ACTUAL_SIZE" = "$EXPECTED_SIZE" ]; then
+              echo "jsDelivrでの配信を確認しました (${ACTUAL_SIZE} bytes, ${i}回目で成功)"
+              exit 0
+            fi
+            echo "まだ配信されていません (${i}回目, 取得サイズ: ${ACTUAL_SIZE:-なし} / 期待値: ${EXPECTED_SIZE}) — 5秒待機します"
+            sleep 5
+          done
+          echo "::error::jsDelivrでの配信確認がタイムアウトしました"
+          exit 1
+
       - name: Send audio message via LINE
         env:
           LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
